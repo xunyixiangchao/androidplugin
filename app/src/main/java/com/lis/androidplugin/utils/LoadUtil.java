@@ -12,7 +12,7 @@ import dalvik.system.PathClassLoader;
  * Created by lis on 2020/7/20.
  */
 public class LoadUtil {
-    private final static String apkPath = "/data/data/com.lis.androidplugin/dexfile/plugin.apk";
+    private final static String apkPath = "/data/data/com.lis.androidplugin/dexfile/plugin-debug.apk";
 
     public static void loadClass(Context context) {
         try {

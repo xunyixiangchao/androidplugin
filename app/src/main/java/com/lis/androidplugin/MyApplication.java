@@ -2,6 +2,7 @@ package com.lis.androidplugin;
 
 import android.app.Application;
 
+import com.lis.androidplugin.utils.HookUtil;
 import com.lis.androidplugin.utils.LoadUtil;
 
 /**
@@ -12,5 +13,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         LoadUtil.loadClass(this);
+        HookUtil.hookAMS();
+        HookUtil.hookHandler();
+
     }
 }
