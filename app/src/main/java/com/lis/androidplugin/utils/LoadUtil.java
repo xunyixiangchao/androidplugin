@@ -1,6 +1,7 @@
 package com.lis.androidplugin.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -12,8 +13,8 @@ import dalvik.system.PathClassLoader;
  * Created by lis on 2020/7/20.
  */
 public class LoadUtil {
-    private final static String apkPath = "/data/data/com.lis.androidplugin/dexfile/plugin-debug.apk";
-
+    private final static String apkPath = "/data/data/com.lis.androidplugin/dex/plugin.apk";
+    // private final static String apkPath="/sdcard/plugin.apk";//指向/storage/self/primary
     public static void loadClass(Context context) {
         try {
             Class<?> baseDexClassLoaderClass = Class.forName("dalvik.system.BaseDexClassLoader");
@@ -22,7 +23,6 @@ public class LoadUtil {
             Class<?> dexPathList = Class.forName("dalvik.system.DexPathList");
             Field dexElements = dexPathList.getDeclaredField("dexElements");
             dexElements.setAccessible(true);
-
 
             /**
              * 插件
@@ -37,7 +37,7 @@ public class LoadUtil {
             Object pluginPathList = pathList.get(dexClassLoader);
             //拿到了插件的dexElements
             Object[] pluginDexElements = (Object[]) dexElements.get(pluginPathList);
-
+            Log.e("LoadUtil", "pluginDexElements: " + pluginDexElements.length);
             /**
              * 宿主
              */
@@ -54,7 +54,9 @@ public class LoadUtil {
             System.arraycopy(pluginDexElements, 0, elements, hostDexElements.length, pluginDexElements.length);
 
 
-            dexElements.set(hostPathList,elements);
+            dexElements.set(hostPathList, elements);
+            Object[] hostDexElements2 = (Object[]) dexElements.get(hostPathList);
+            Log.e("LoadUtil", "pluginDexElements: " + hostDexElements2.length);
         } catch (Exception e) {
             e.printStackTrace();
         }

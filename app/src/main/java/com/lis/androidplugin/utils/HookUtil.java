@@ -99,6 +99,7 @@ public class HookUtil {
 
                 @Override
                 public boolean handleMessage(Message msg) {
+                    Log.e("HookUtil", "handleMessage: " + msg.what);
                     //将Intent替换回来
                     switch (msg.what) {
                         case 100:
