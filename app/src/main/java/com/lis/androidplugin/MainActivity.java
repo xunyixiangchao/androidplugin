@@ -1,14 +1,11 @@
 package com.lis.androidplugin;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 
-import java.lang.reflect.Method;
+import androidx.appcompat.app.AppCompatActivity;
 
-import dalvik.system.DexClassLoader;
-import dalvik.system.PathClassLoader;
+import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,9 +20,11 @@ public class MainActivity extends AppCompatActivity {
                 // DexClassLoader dexClassLoader = new DexClassLoader("/data/data/com.lis.androidplugin/dexfile/test.dex",
                 //         MainActivity.this.getCacheDir().getAbsolutePath(), null, getClassLoader());
                 //2
-                PathClassLoader dexClassLoader =new PathClassLoader("/data/data/com.lis.androidplugin/dexfile/test.dex",getClassLoader());
+//                PathClassLoader dexClassLoader =new PathClassLoader("/data/data/com.lis.androidplugin/dexfile/test.dex",getClassLoader());
                 try {
-                    Class<?> aClass = dexClassLoader.loadClass("com.lis.plugin.Test");
+//                  1.  Class<?> aClass = getClassLoader().loadClass("com.lis.plugin.Test");
+                    //2.
+                    Class<?> aClass = Class.forName("com.lis.plugin.Test");
                     Method print = aClass.getMethod("print");
                     print.invoke(null);
                 } catch (Exception e) {
