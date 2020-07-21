@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
 //                } catch (Exception e) {
 //                }
                 //启动插件的类
-                Intent intent=new Intent();
+                Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.lis.plugin",
                         "com.lis.plugin.MainActivity"));
                 startActivity(intent);

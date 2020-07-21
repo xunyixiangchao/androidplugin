@@ -1,10 +1,13 @@
 package com.lis.androidplugin.utils;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import dalvik.system.DexClassLoader;
 import dalvik.system.PathClassLoader;
@@ -13,7 +16,8 @@ import dalvik.system.PathClassLoader;
  * Created by lis on 2020/7/20.
  */
 public class LoadUtil {
-    private final static String apkPath = "/data/data/com.lis.androidplugin/dex/plugin.apk";
+    private final static String apkPath = "/data/data/com.lis.androidplugin/dex/plugin-debug.apk";
+
     // private final static String apkPath="/sdcard/plugin.apk";//指向/storage/self/primary
     public static void loadClass(Context context) {
         try {
@@ -60,8 +64,27 @@ public class LoadUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-
+    /**
+     * 加载插件资源
+     *
+     * @param context
+     * @return
+     */
+    public static Resources loadResource(Context context) {
+        try {
+            AssetManager assetManager = AssetManager.class.newInstance();
+            Method addAssetPathMethod = assetManager.getClass().getDeclaredMethod("addAssetPath", String.class);
+            addAssetPathMethod.setAccessible(true);
+            //参数就是插件的资源路径
+            addAssetPathMethod.invoke(assetManager, apkPath);
+            Resources resources = context.getResources();
+            return new Resources(assetManager, resources.getDisplayMetrics(), resources.getConfiguration());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 
