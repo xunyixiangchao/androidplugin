@@ -21,7 +21,15 @@ public class HookUtil {
     public static void hookAMS() {
         try {
             Object singleton = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                //获取Singleton对象
+                Class<?> aClass = Class.forName("android.app.ActivityTaskManager");
+                Field singletonField = aClass.getDeclaredField("IActivityTaskManagerSingleton");
+                singletonField.setAccessible(true);
+                singleton = singletonField.get(null);
+
+            } else
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 //获取Singleton对象
                 Class<?> aClass = Class.forName("android.app.ActivityManager");
                 Field singletonField = aClass.getDeclaredField("IActivityManagerSingleton");
@@ -37,10 +45,20 @@ public class HookUtil {
             Class<?> singletonClass = Class.forName("android.util.Singleton");
             Field mInstanceField = singletonClass.getDeclaredField("mInstance");
             mInstanceField.setAccessible(true);
+            if (Build.VERSION.SDK_INT  >= Build.VERSION_CODES.Q) {
+                //Q上需要动态执行create方法
+                Method getMethod = singletonClass.getMethod("get");
+                getMethod.setAccessible(true);
+                getMethod.invoke(singleton);
+            }
+
+            //拿到系统的instance对象是为了不改变原有的流程method.invoke(mInstance, args)
             final Object mInstance = mInstanceField.get(singleton);
 
             Class<?> iActivityManagerClass = Class.forName("android.app.IActivityManager");
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                iActivityManagerClass = Class.forName("android.app.IActivityTaskManager");
+            }
             Object proxyInstance = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{iActivityManagerClass},
                     new InvocationHandler() {
                         @Override
@@ -65,7 +83,7 @@ public class HookUtil {
                                 proxyIntent.putExtra(TARGET_INTENT, intent);
                                 args[index] = proxyIntent;
                             }
-                            //原来的方法
+                            //原来的方法--不改变原有的执行流程
                             return method.invoke(mInstance, args);
                         }
                     });
